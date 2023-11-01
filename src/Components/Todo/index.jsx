@@ -1,9 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import useForm from '../../hooks/form';
 
 import { v4 as uuid } from 'uuid';
+import { SettingsContext } from '../../Context/Settings';
+
+import { Pagination } from '@mantine/core';
 
 const Todo = () => {
+
+	const settings = useContext(SettingsContext) // Opt into providers data, if no provider is present, will be undefined
+	console.log(settings);
 
 	const [defaultValues] = useState({
 		difficulty: 4,
@@ -35,6 +41,14 @@ const Todo = () => {
 
 		setList(items);
 
+	}
+
+	const calculateTotal = () => Math.ceil(list.length / settings.displayItems)
+
+	const handlePagination = () => {
+		// Seperate into groups
+
+		// Find the next {displayItems} to render
 	}
 
 	useEffect(() => {
@@ -85,7 +99,7 @@ const Todo = () => {
 					<hr />
 				</div>
 			))}
-
+			<Pagination value={1} total={calculateTotal()} onChange={handlePagination()} />
 		</>
 	);
 };

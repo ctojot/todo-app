@@ -1,16 +1,14 @@
 import React from 'react';
+import SettingsProvider from './Context/Settings/index';
 import Todo from './Components/Todo';
-import ThemeProvider from './Context/Settings'
-import ThemeSettings from 
 
 export default class App extends React.Component {
 	render() {
 		return (
-			// Anything between the opening and closing is a child, any child can be a consumer
-			<ThemeProvider>
-
+			<SettingsProvider>
 				<Todo />
-			</ThemeProvider>
+			</SettingsProvider>
+			
 		);
 	}
 }

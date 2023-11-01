@@ -1,21 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // This is the object that will track values
-export const ThemeContext = React.createContext();
+export const SettingsContext = React.createContext();
 
 // This is the Provider that must be present at the root of our app.
-function ThemeProvider(props) {
-	const [mode, setMode] = useState('light');
+function SettingsProvider(props) {
+	const [displayItems, setDisplayItems] = useState(3);
+	const [hideCompleted, setHideCompleted] = useState(false);
+	const [sort, setSort] = useState('difficulty');
 
-	const [primaryColor, setPrimaryColor] = useState('baby-blue');
+	const toggleCompleted = () => {
+		if (hideCompleted === false) {
+			setHideCompleted(true);	
+		} else {
+			setHideCompleted(false);
+		}
+	}
+	
+
+	useEffect(() => {
+		if (hideCompleted === true) {
+			setHideCompleted(true);
+		} else {
+			setHideCompleted(false);
+		}
+	}, [displayItems] )
 
 	return (
 		// The value prop must be called value
-		<ThemeContext.Provider value={{ mode, primaryColor }}>
+		<SettingsContext.Provider value={{ displayItems, hideCompleted, sort, toggleCompleted }}>
 			{/* This is not banana*/}
 			{props.children}
-		</ThemeContext.Provider>
+		</SettingsContext.Provider>
 	)
 }
 
-export default ThemeProvider;
+export default SettingsProvider;
