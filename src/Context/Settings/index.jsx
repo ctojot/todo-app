@@ -9,26 +9,33 @@ function SettingsProvider(props) {
 	const [hideCompleted, setHideCompleted] = useState(false);
 	const [sort, setSort] = useState('difficulty');
 
-	const toggleCompleted = () => {
-		if (hideCompleted === false) {
-			setHideCompleted(true);	
+	const toggleComplete = () => setHideCompleted(!hideCompleted);
+	const changeDisplayItems = (num) => {
+		if (typeof (parseInt(num)) === 'number') {
+			setDisplayItems(num);
 		} else {
-			setHideCompleted(false);
+			console.log('Choose the amount you want to list');
 		}
 	}
 	
 
 	useEffect(() => {
-		if (hideCompleted === true) {
-			setHideCompleted(true);
-		} else {
-			setHideCompleted(false);
+		let settingsValuesFromLocalStorage = JSON.parse(localStorage.getItem('settings'));
+		if (settingsValuesFromLocalStorage) {
+			setDisplayItems(settingsValuesFromLocalStorage.displayItems);
+			setHideCompleted(settingsValuesFromLocalStorage.hideCompleted);
 		}
-	}, [displayItems] )
+	}, []); // runs once! When the component "mounts"
+
+	useEffect(() => {
+		// saving values to localstorage
+		localStorage.setItem('settings', JSON.stringify({ displayItems, hideCompleted }));
+		// console.log(localStorage);
+	}, [hideCompleted, displayItems]);
 
 	return (
 		// The value prop must be called value
-		<SettingsContext.Provider value={{ displayItems, hideCompleted, sort, toggleCompleted }}>
+		<SettingsContext.Provider value={{ displayItems, hideCompleted, sort, toggleComplete, changeDisplayItems }}>
 			{/* This is not banana*/}
 			{props.children}
 		</SettingsContext.Provider>
