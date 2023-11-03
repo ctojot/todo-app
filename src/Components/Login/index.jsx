@@ -1,17 +1,17 @@
-import React, { useState, useContext } from 'react';
+import React from 'react';
 import { When } from 'react-if';
-import { LoginContext } from './context.js';
+import { LoginContext } from '../../Context/Login';
 
-function Login() {
-  const context = useContext(LoginContext);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+function Login(props) {
+  const context = React.useContext(LoginContext);
+  const [username, setUsername] = React.useState('');
+  const [password, setPassword] = React.useState('');
 
   const handleChange = (e) => {
-    if (e.target.name === 'username') {
-      setUsername(e.target.value);
-    } else if (e.target.name === 'password') {
+    if (e.target.name === 'password') {
       setPassword(e.target.value);
+    } else {
+      setUsername(e.target.value);
     }
   };
 
