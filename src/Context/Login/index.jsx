@@ -28,19 +28,24 @@ const testUsers = {
 export const LoginContext = React.createContext();
 
 function LoginProvider(props) {
-	const [state, setState] = useState({
-		loggedIn: false,
-		user: { capabilites: [] },
-		error: null,
-	})
+  let [loggedIn, setLoggedIn] = React.useState(false);
+  let [user, setUser] = React.useState({capabilities: [] });
+  let [token, setToken] = React.useState(null);
+  let [error, setError] = React.useState(null);
 
   const can = (capability) => {
-    return state.user?.capabilities?.includes(capability);
+    return user?.capabilities?.includes(capability);
   }
 
   const login = async (username, password) => {
-    let { loggedIn, token, user } = state;
-    let auth = testUsers[username];
+    // let { loggedIn, token, user } = state;
+
+    let encodedCreds = btoa(`${username}:${password}`);
+
+    try {
+    let response = await axios.post('/signin').set({ Authorization: `Basic ${encodedCreds}`});
+
+    // let auth = testUsers[username];
 
     if (auth && auth.password === password) {
       try {
@@ -53,16 +58,16 @@ function LoginProvider(props) {
   }
 
   const logout = () => {
-    setLoginState(false, null, {});
+    setLoginState(false, null, { capabilities: [] });
   };
 
-   const validateToken = (token) => {
+  const validateToken = (token) => {
     try {
-      let validUser = jwt_decode(token);
+      let validUser = jwtDecode(token);
       setLoginState(true, token, validUser);
     }
     catch (e) {
-      setLoginState(false, null, {}, e);
+      setLoginState(false, null, { capabilities: [] }, e);
       console.log('Token Validation Error', e);
     }
 
@@ -70,22 +75,26 @@ function LoginProvider(props) {
 
   const setLoginState = (loggedIn, token, user, error) => {
     cookie.save('auth', token);
-    setState({ token, loggedIn, user, error: error || null });
+    // setState({ token, loggedIn, user, error: error || null });
+    setToken(token);
+    setLoggedIn(loggedIn);
+    setUser(user);
+    setError(error || null);
   };
 
-  useEffect(() =>  {
+  React.useEffect(() => {
     const qs = new URLSearchParams(window.location.search);
     const cookieToken = cookie.load('auth');
     const token = qs.get('token') || cookieToken || null;
-    this.validateToken(token);
+    validateToken(token);
   }, []);
 
-  
-    return (
-      <LoginContext.Provider value={{ ...state, can, login, logout}}>
-        {props.children}
-      </LoginContext.Provider>
-    );
+
+  return (
+    <LoginContext.Provider value={{ loggedIn, can, login, logout, user, error }}>
+      {props.children}
+    </LoginContext.Provider>
+  );
 }
 
 export default LoginProvider;

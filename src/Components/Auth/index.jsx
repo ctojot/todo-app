@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { When } from 'react-if';
 import { LoginContext } from '../../Context/Auth/index';
 
 function Login(props) {
-  const context = useContext(LoginContext);
+  const context = React.useContext(LoginContext);
 
   const isLoggedIn = context.loggedIn;
   const canDo = props.capability ? context.can(props.capability) : true;
